@@ -25,8 +25,14 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
     
-    public Optional<Cliente> buscarPorId(Long id) {
-        return clienteRepository.findById(id);
+    public Cliente buscarPorId(Long id) {
+    	Optional<Cliente> cliente = clienteRepository.findById(id);
+
+        if (cliente.isPresent()) {
+            return cliente.get();
+        }
+
+        throw new RuntimeException("Cliente não encontrado");
     }
     
     public Cliente atualizar(Long id, Cliente cliente) {

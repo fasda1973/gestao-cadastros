@@ -2,9 +2,9 @@ package gestao_cadastros.controller;
 
 import gestao_cadastros.entity.Cliente;
 import gestao_cadastros.service.ClienteService;
+import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +27,7 @@ public class ClienteController {
     }
     
     @PostMapping
-    public Cliente salvar(@RequestBody Cliente cliente) {
+    public Cliente salvar(@Valid @RequestBody Cliente cliente) {
         return clienteService.salvar(cliente);
     }
     
@@ -39,13 +39,9 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
     	
-    	Optional<Cliente> cliente = clienteService.buscarPorId(id);
+    	Cliente cliente = clienteService.buscarPorId(id);
 
-        if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(cliente);
     	   	
     }
     

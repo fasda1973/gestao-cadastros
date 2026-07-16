@@ -1,6 +1,7 @@
 package gestao_cadastros.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Cliente {
@@ -9,9 +10,16 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String nome;
+    
+    @NotBlank
     private String cpf;
+    
+    @NotBlank
     private String email;
+    
+    @NotBlank
     private String telefone;
 
     public Cliente() {
