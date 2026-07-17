@@ -10,16 +10,16 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "O nome é obrigatório.")
     private String nome;
     
-    @NotBlank
+    @NotBlank(message = "O CPF é obrigatório.")
     private String cpf;
     
-    @NotBlank
+    @NotBlank(message = "O e-mail é obrigatório.")
     private String email;
     
-    @NotBlank
+    @NotBlank(message = "O telefone é obrigatório.")
     private String telefone;
 
     public Cliente() {
