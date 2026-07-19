@@ -1,10 +1,14 @@
 package gestao_cadastros.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import gestao_cadastros.dto.ClienteRequest;
+import gestao_cadastros.dto.ClienteResponse;
 import gestao_cadastros.entity.Cliente;
 import gestao_cadastros.repository.ClienteRepository;
 
@@ -17,25 +21,56 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
     
-    public Cliente salvar(Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public ClienteResponse salvar(ClienteRequest request) {
+    	
+    	Cliente cliente = new Cliente();
+    	
+    	cliente.setNome(request.getNome());
+    	cliente.setCpf(request.getCpf());
+    	cliente.setEmail(request.getEmail());
+    	cliente.setTelefone(request.getTelefone());
+    
+        cliente = clienteRepository.save(cliente);
+        
+        return converterParaResponse(cliente);
     }
     
-    public List<Cliente> listarTodos() {
-        return clienteRepository.findAll();
+    public List<ClienteResponse> listarTodos(String nome) {
+    	   	   	    
+    	List<Cliente> clientes;
+    	
+    	if (!StringUtils.hasText(nome)) {
+    		clientes = clienteRepository.findAll();
+    	} else {
+    		clientes = clienteRepository.findByNomeContaining(nome);
+    	}
+    	
+    	List<ClienteResponse> responses = new ArrayList<>();
+    	
+    	for (Cliente cliente : clientes) {
+	        
+	        responses.add(converterParaResponse(cliente));
+        
+    	}
+        
+        return responses;
     }
     
-    public Cliente buscarPorId(Long id) {
-    	Optional<Cliente> cliente = clienteRepository.findById(id);
-
-        if (cliente.isPresent()) {
-            return cliente.get();
-        }
-
-        throw new RuntimeException("Cliente não encontrado");
+    public ClienteResponse buscarPorId(Long id) {
+    	Optional<Cliente> clienteExistente = clienteRepository.findById(id);
+    	
+    	if (clienteExistente.isEmpty()) {
+    	   	
+    		throw new RuntimeException("Cliente não encontrado");
+    	}
+    	
+    	Cliente clienteRetorna = clienteExistente.get();
+           
+        return converterParaResponse(clienteRetorna);
+       
     }
     
-    public Cliente atualizar(Long id, Cliente cliente) {
+    public ClienteResponse atualizar(Long id, ClienteRequest request) {
     	
     	Optional<Cliente> clienteExistente = clienteRepository.findById(id);
     	
@@ -46,15 +81,29 @@ public class ClienteService {
     	
     	Cliente clienteSalvo = clienteExistente.get();
     	
-    	clienteSalvo.setNome(cliente.getNome());
-    	clienteSalvo.setCpf(cliente.getCpf());
-    	clienteSalvo.setEmail(cliente.getEmail());
-    	clienteSalvo.setTelefone(cliente.getTelefone());
+    	clienteSalvo.setNome(request.getNome());
+    	clienteSalvo.setCpf(request.getCpf());
+    	clienteSalvo.setEmail(request.getEmail());
+    	clienteSalvo.setTelefone(request.getTelefone());
     	
-    	return clienteRepository.save(clienteSalvo);
+    	clienteSalvo = clienteRepository.save(clienteSalvo);
+    	
+    	return converterParaResponse(clienteSalvo);
     }
     
     public void excluir(Long id) {
     	clienteRepository.deleteById(id);
+    }
+    
+    private ClienteResponse converterParaResponse(Cliente cliente) {
+
+        ClienteResponse response = new ClienteResponse();
+
+        response.setId(cliente.getId());
+        response.setNome(cliente.getNome());
+        response.setEmail(cliente.getEmail());
+        response.setTelefone(cliente.getTelefone());
+
+        return response;
     }
 }
