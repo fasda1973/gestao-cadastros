@@ -1,9 +1,9 @@
 package gestao_cadastros.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -35,25 +35,17 @@ public class ClienteService {
         return converterParaResponse(cliente);
     }
     
-    public List<ClienteResponse> listarTodos(String nome) {
+    public Page<ClienteResponse> listarTodos(String nome, Pageable pageable) {
     	   	   	    
-    	List<Cliente> clientes;
+    	Page<Cliente> clientes;
     	
     	if (!StringUtils.hasText(nome)) {
-    		clientes = clienteRepository.findAll();
+    		clientes = clienteRepository.findAll(pageable);
     	} else {
-    		clientes = clienteRepository.findByNomeContaining(nome);
-    	}
-    	
-    	List<ClienteResponse> responses = new ArrayList<>();
-    	
-    	for (Cliente cliente : clientes) {
-	        
-	        responses.add(converterParaResponse(cliente));
-        
+    		clientes = clienteRepository.findByNomeContaining(nome, pageable);
     	}
         
-        return responses;
+        return clientes.map(this::converterParaResponse);
     }
     
     public ClienteResponse buscarPorId(Long id) {

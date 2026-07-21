@@ -5,8 +5,8 @@ import gestao_cadastros.dto.ClienteResponse;
 import gestao_cadastros.service.ClienteService;
 import jakarta.validation.Valid;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +34,10 @@ public class ClienteController {
     }
        
     @GetMapping
-    public List<ClienteResponse> listarTodos(
-    		@RequestParam(required = false) String nome) {
-        return clienteService.listarTodos(nome);
+    public Page<ClienteResponse> listarTodos(
+    		@RequestParam(required = false) String nome,
+    		Pageable pageable) {
+        return clienteService.listarTodos(nome, pageable);
     }
     
     @GetMapping("/{id}")

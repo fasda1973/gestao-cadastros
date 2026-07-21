@@ -2,12 +2,12 @@ package gestao_cadastros.repository;
 
 import gestao_cadastros.entity.Cliente;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 	
-	List<Cliente> findByNomeContaining(String texto);
+	Page<Cliente> findByNomeContaining(String texto, Pageable pageable);
 
 }
