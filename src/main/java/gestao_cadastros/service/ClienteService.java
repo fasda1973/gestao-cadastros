@@ -10,25 +10,25 @@ import org.springframework.util.StringUtils;
 import gestao_cadastros.dto.ClienteRequest;
 import gestao_cadastros.dto.ClienteResponse;
 import gestao_cadastros.entity.Cliente;
+import gestao_cadastros.mapper.ClienteMapper;
 import gestao_cadastros.repository.ClienteRepository;
 
 @Service
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final ClienteMapper clienteMapper;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository,
+    					  ClienteMapper clienteMapper) {
         this.clienteRepository = clienteRepository;
+        this.clienteMapper = clienteMapper;
     }
+    
     
     public ClienteResponse salvar(ClienteRequest request) {
     	
-    	Cliente cliente = new Cliente();
-    	
-    	cliente.setNome(request.getNome());
-    	cliente.setCpf(request.getCpf());
-    	cliente.setEmail(request.getEmail());
-    	cliente.setTelefone(request.getTelefone());
+    	Cliente cliente = clienteMapper.toEntity(request);
     
         cliente = clienteRepository.save(cliente);
         
