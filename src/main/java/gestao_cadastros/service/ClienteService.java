@@ -1,7 +1,5 @@
 package gestao_cadastros.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,6 +8,7 @@ import org.springframework.util.StringUtils;
 import gestao_cadastros.dto.ClienteRequest;
 import gestao_cadastros.dto.ClienteResponse;
 import gestao_cadastros.entity.Cliente;
+import gestao_cadastros.exception.ClienteNaoEncontradoException;
 import gestao_cadastros.mapper.ClienteMapper;
 import gestao_cadastros.repository.ClienteRepository;
 
@@ -49,38 +48,31 @@ public class ClienteService {
     }
     
     public ClienteResponse buscarPorId(Long id) {
-    	Optional<Cliente> clienteExistente = clienteRepository.findById(id);
     	
-    	if (clienteExistente.isEmpty()) {
-    	   	
-    		throw new RuntimeException("Cliente não encontrado");
-    	}
-    	
-    	Cliente clienteRetorna = clienteExistente.get();
+    	Cliente cliente = clienteRepository
+    			.findById(id)
+    			.orElseThrow(() ->
+    				new ClienteNaoEncontradoException("Cliente não encontrado"));    	
            
-        return converterParaResponse(clienteRetorna);
+        return converterParaResponse(cliente);
        
     }
     
     public ClienteResponse atualizar(Long id, ClienteRequest request) {
     	
-    	Optional<Cliente> clienteExistente = clienteRepository.findById(id);
+    	Cliente cliente = clienteRepository
+    			.findById(id)
+    			.orElseThrow(() -> 
+    				new ClienteNaoEncontradoException("Cliente não encontrado"));
     	
-    	if (clienteExistente.isEmpty()) {
-   	
-    		throw new RuntimeException("Cliente não encontrado");
-    	}
+    	cliente.setNome(request.getNome());
+    	cliente.setCpf(request.getCpf());
+    	cliente.setEmail(request.getEmail());
+    	cliente.setTelefone(request.getTelefone());
     	
-    	Cliente clienteSalvo = clienteExistente.get();
+    	cliente = clienteRepository.save(cliente);
     	
-    	clienteSalvo.setNome(request.getNome());
-    	clienteSalvo.setCpf(request.getCpf());
-    	clienteSalvo.setEmail(request.getEmail());
-    	clienteSalvo.setTelefone(request.getTelefone());
-    	
-    	clienteSalvo = clienteRepository.save(clienteSalvo);
-    	
-    	return converterParaResponse(clienteSalvo);
+    	return converterParaResponse(cliente);
     }
     
     public void excluir(Long id) {
@@ -98,4 +90,5 @@ public class ClienteService {
 
         return response;
     }
+  
 }
