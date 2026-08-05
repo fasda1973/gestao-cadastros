@@ -23,15 +23,14 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
         this.clienteMapper = clienteMapper;
     }
-    
-    
+        
     public ClienteResponse salvar(ClienteRequest request) {
     	
     	Cliente cliente = clienteMapper.toEntity(request);
     
         cliente = clienteRepository.save(cliente);
         
-        return converterParaResponse(cliente);
+        return clienteMapper.toResponse(cliente);
     }
     
     public Page<ClienteResponse> listarTodos(String nome, Pageable pageable) {
@@ -44,7 +43,7 @@ public class ClienteService {
     		clientes = clienteRepository.findByNomeContaining(nome, pageable);
     	}
         
-        return clientes.map(this::converterParaResponse);
+        return clientes.map(clienteMapper::toResponse);
     }
     
     public ClienteResponse buscarPorId(Long id) {
@@ -54,7 +53,7 @@ public class ClienteService {
     			.orElseThrow(() ->
     				new ClienteNaoEncontradoException("Cliente não encontrado"));    	
            
-        return converterParaResponse(cliente);
+        return clienteMapper.toResponse(cliente);
        
     }
     
@@ -72,23 +71,11 @@ public class ClienteService {
     	
     	cliente = clienteRepository.save(cliente);
     	
-    	return converterParaResponse(cliente);
+    	return clienteMapper.toResponse(cliente);
     }
     
     public void excluir(Long id) {
     	clienteRepository.deleteById(id);
     }
-    
-    private ClienteResponse converterParaResponse(Cliente cliente) {
-
-        ClienteResponse response = new ClienteResponse();
-
-        response.setId(cliente.getId());
-        response.setNome(cliente.getNome());
-        response.setEmail(cliente.getEmail());
-        response.setTelefone(cliente.getTelefone());
-
-        return response;
-    }
-  
+      
 }
