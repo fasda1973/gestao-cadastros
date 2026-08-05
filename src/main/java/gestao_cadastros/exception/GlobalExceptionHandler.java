@@ -49,5 +49,19 @@ public class GlobalExceptionHandler {
 				.status(HttpStatus.NOT_FOUND)
 				.body(erroResponse);
 	}
+	
+	@ExceptionHandler(ProdutoNaoEncontradoException.class)
+    public ResponseEntity<ErroResponse> tratarProdutoNaoEncontrado(ProdutoNaoEncontradoException ex) {
+		
+		ErroResponse erroResponse = new ErroResponse();
+		
+		erroResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		erroResponse.setMensagem(ex.getMessage());
+		erroResponse.setDataHora(LocalDateTime.now());
+		
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(erroResponse);
+	}
 
 }
